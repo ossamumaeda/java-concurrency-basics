@@ -1,0 +1,3 @@
+Simple rate limiter
+
+Limit requests per second using concurrency tools
