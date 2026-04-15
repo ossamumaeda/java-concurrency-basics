@@ -1,5 +1,6 @@
 package rate_limiter;
 
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -18,7 +19,7 @@ public class RateLimiter {
                 3. Verifica se pode adicionar
                 4. Se não puder espere -> O tempo de espera é a diferença de tempo entre o timestamp mais antigo e o atual
          */
-        BlockingQueue<Long> queue = new LinkedBlockingDeque<>();
+        LimiterController limiterController = new LimiterController();
 
         BlockingQueue<Integer> tasksQueue = new ArrayBlockingQueue<>(5);
 
@@ -29,10 +30,11 @@ public class RateLimiter {
                 try {
 
                     // Dar um jeito de usar a queue aqui e validar se pode colocar uma nova task?
-
                     System.out.println("Produzindo: " + i);
-                    tasksQueue.put(i++); // bloqueia se cheio
-                    Thread.sleep(500);
+                    Long ok = limiterController.check(tasksQueue, i++);
+                    if(ok > 0){
+                        Thread.sleep(ok);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -51,33 +53,6 @@ public class RateLimiter {
                 }
             }
         }).start();
-
-    }
-
-    public static long verifyQueue(BlockingQueue<Long> queue){
-        
-        int max_requests = 10;
-        try {
-
-            // Remover os itens de queue com mais de 1 segundo
-            Long now = System.nanoTime();
-            while (!queue.isEmpty() && now - queue.peek() > 1_000_000_000L) { // Enquanto o elemento atual da queue ja tiver passado mais de 1 segundo retira
-                queue.take();
-            }
-
-            if (queue.size() < max_requests) { // Tem espaço
-                System.out.println("Tem espaço! " + now);
-                return -1L;
-
-            } else {
-                System.out.println("Sem espaço! " + now);
-                return (1_000_000_000L + queue.peek()) - now;
-            }
-
-
-        } catch (InterruptedException e) {
-            return -1L;
-        }
 
     }
 
