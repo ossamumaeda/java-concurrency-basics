@@ -26,7 +26,6 @@ public class Main {
         try {
             executor.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         System.out.println(map.get("counter")); 

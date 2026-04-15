@@ -12,7 +12,7 @@ Pool -> Ajuda a controlar o numero de threads sendo criada
     - Reutilizacao de threads
 */
 
-public class main {
+public class Main {
     public static void main(String[] args) {
         List<Integer> l = new CopyOnWriteArrayList<>();
         ExecutorService executorService = Executors.newCachedThreadPool();// 4-thread pool
@@ -31,8 +31,6 @@ public class main {
         try {
             executorService.invokeAll(tasks);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } // blocks until ALL finish
         executorService.shutdown();
 

@@ -70,7 +70,7 @@ public class Example {
     static void sleep(int ms) {
         try {
             Thread.sleep(ms);
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
         }
     }
 }

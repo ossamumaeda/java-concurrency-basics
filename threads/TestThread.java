@@ -1,15 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
 
 /*
 Exemplo syncronized
@@ -36,7 +25,7 @@ public class TestThread extends Thread {
                 System.out.println(name + " :: " + i);
                 try {
                     Thread.sleep(500);
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
                     System.out.println(e.getMessage());
                 }
             }
@@ -45,9 +34,14 @@ public class TestThread extends Thread {
 
     public static void main(String[] args) {
         TheDemo theDemo = new TheDemo();
-        new TestThread("THREAD 1", theDemo);
-        new TestThread("THREAD 2", theDemo);
-        new TestThread("THREAD 3", theDemo);
+        @SuppressWarnings("unused")
+        TestThread t = new TestThread("THREAD 1", theDemo);
+        @SuppressWarnings("unused")
+
+        TestThread t2 = new TestThread("THREAD 2", theDemo);
+        @SuppressWarnings("unused")
+
+        TestThread t3 = new TestThread("THREAD 3", theDemo);
     }
 }
    

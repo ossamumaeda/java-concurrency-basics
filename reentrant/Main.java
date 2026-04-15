@@ -15,15 +15,13 @@ public class Main {
 
             executor.submit(() -> {
 
-
                 if (queue.tryProcess()) {
                     try {
-                        System.out.println("Processing task " + taskId);
-                        
+
+                        System.out.println("Processing task " + taskId);                        
                         Thread.sleep(ThreadLocalRandom.current().nextInt(500, 1501));
 
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
                     } finally {
                         queue.finish();
                     }
@@ -32,8 +30,6 @@ public class Main {
                         try {
                             Thread.sleep(50);
                         } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
                         } // espera e tenta de novo
                     }
                 }

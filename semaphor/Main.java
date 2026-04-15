@@ -27,10 +27,9 @@ public class Main {
 
                     System.out.println("Task " + taskId + " entrou!");
 
-                    Thread.sleep(1000);
+                    // Thread.sleep(1000);
 
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 } finally {
                     semaphore.release(); // devolve permissão
                     System.out.println("Task " + taskId + " saiu!");
