@@ -5,6 +5,12 @@ import java.util.concurrent.BlockingQueue;
 
 public class RateLimiter {
 
+    /*
+    Rate limiter implementado com a ideia de sliding window
+        -> Tentar controlar o fluxo de requisicoes baseado em "janelas" de tempo
+        . A ideia do algoritmo eh sempre limpar atualizar/limpar a janela com base no tempo fixo
+    */
+
     public static void main(String[] args) {
 
         LimiterController limiterController = new LimiterController();
@@ -18,7 +24,7 @@ public class RateLimiter {
 
                 ReturnDTO retorno = limiterController.checkAndQueue(tasksQueue, i);
 
-                if (retorno.status().equals(ValidQueueEnum.WAIT_LIMIT)) {
+                if (retorno.status() == ValidQueueEnum.WAIT_LIMIT) {
                     
                     try {
                         Thread.sleep(retorno.time_await()/1000000);
@@ -26,7 +32,7 @@ public class RateLimiter {
                         e1.printStackTrace();
                     }
 
-                } else if (retorno.status().equals(ValidQueueEnum.WAIT_QUEUE)) {
+                } else if (retorno.status() == ValidQueueEnum.WAIT_QUEUE) {
                     
                     try {
                         Thread.sleep(500);
@@ -35,7 +41,7 @@ public class RateLimiter {
                     }
 
                 }  
-                else if(retorno.status().equals(ValidQueueEnum.SUCCESS)){
+                else if(retorno.status() == ValidQueueEnum.SUCCESS){
                     i++;
                 }
             }

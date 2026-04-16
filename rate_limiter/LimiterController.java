@@ -23,7 +23,7 @@ public class LimiterController {
 
             if (this.limiter.size() >= max_requests) {
                 System.out.println("Sem espaço limiter:" + this.limiter.size());
-                return new ReturnDTO(ValidQueueEnum.WAIT_LIMIT, (1_000_000_000L + limiter.peek()) - now);
+                return new ReturnDTO(ValidQueueEnum.WAIT_LIMIT, Math.max(0,(1_000_000_000L + limiter.peek()) - now));
 
             }
 
