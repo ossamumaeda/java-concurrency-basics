@@ -1,0 +1,52 @@
+Retry - “This might work if I try again later.”
+A retry means re-attempting an operation after it fails.
+
+
+Timeouts - “Don’t wait forever”
+A timeout limits how long you’re willing to wait.
+
+Circuit Breaker (Pattern) - “Stop trying when things are clearly broken”
+Closed (normal)
+    Requests flow normally
+    Failures are monitored
+Open (failure mode)
+    After reaching the % of failure → stop calls immediately
+    Fail fast
+Half-open (test mode)
+    Try a determined number requests
+    If success → close again
+    If failure → open again
+
+Why is this core important? Imagine several microservices depending on a response from service A, 
+we can keep trying to get a response from it, or it could be a deterministic way to know when it should 
+expect a response from it. 
+
+A library implementation of this pattern is resilience4j:
+    public class ProductService {
+
+        private final CircuitBreaker circuitBreaker;
+
+        public ProductService() {
+            // 1. Configure the Circuit Breaker
+            CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50) // Threshold for opening the circuit (50%)
+                .waitDurationInOpenState(Duration.ofSeconds(60)) // Wait time before trying to close (60 seconds)
+                .permittedNumberOfCallsInHalfOpenState(5) // Calls allowed in half-open state for testing
+                .build();
+
+            CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
+            this.circuitBreaker = registry.circuitBreaker("productService");
+        }
+
+        public String getProductDetails(String productId) {
+            // 2. Decorate the function call with Circuit Breaker
+            return CircuitBreaker.decorateSupplier(
+                circuitBreaker, () -> fetchProductDetailsFromRemoteService(productId)
+            ).get();
+        }
+
+        private String fetchProductDetailsFromRemoteService(String productId) {
+            // 3. Your actual logic to call the remote product service
+            // If the service fails or times out, throw an exception
+        }
+    }

@@ -1,0 +1,35 @@
+Latency = how fast one request is
+Throughput = how many requests you handle over time
+
+You can have low latency but low throughput (fast but can’t handle many users)
+Or high throughput but high latency (handles many users but each is slow)
+
+
+Vertical Scaling (scale up)
+Increase power of a single machine: + CPU + RAM
+
+Horizontal Scaling (scale out)
+Add more machines
+
+Basically: Distributed system are necessary when you reach a point where:
+    .A single machine becomes too expansive
+    .Or becomes a reliability risk
+
+Java example:
+
+ThreadPoolExecutor executor =
+    new ThreadPoolExecutor(
+        4, 8,
+        60, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(100),
+        new ThreadPoolExecutor.CallerRunsPolicy()
+    );
+
+4 = default pool size
+8 = maximum pool size
+60 + Timeunit = Time a extra thread keeps alive after idle
+ArrayBlockingQueue = essencially the buffer, where the tasks wait when core threads are busy
+CallerRunsPolicy = What happens when all 8 threads are busy and queue size is 100
+
+The core idea is: The bigger the queue is, the fewer the rejection but slows the response
+    - Big queue = +latency -throughtput
