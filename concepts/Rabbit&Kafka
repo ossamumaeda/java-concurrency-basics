@@ -1,0 +1,23 @@
+Main idea behind messages:
+1. Service A → sends message → Broker → Service B consumes
+2. Distributed BlockingQueue on steroids 
+
+Concepts
+
+.Queue -> Producer populates queue -> Queue post message to Consumers
+.Topic -> Consumers can subscribe to topics; Each receiver gets a copy of the message
+.Consumer -> Consumes the message; Responsable for processing and ACKNOWLEDGE the completition 
+
+Message systems:
+
+RabbitMQ - Queue based
+- Broker PUSHES the messages 
+- After the message is consumed it is GONE
+* Services process and remove messages
+
+Kafka - Log based
+- Pull based = Consumers read at their own pace
+- Allow to replay events
+- Streams can be replayed and analyzed
+* Services: Read independently | Can replay history | Scale separately
+
