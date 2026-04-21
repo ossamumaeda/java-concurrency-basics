@@ -1,0 +1,40 @@
+Strong Consistency - synchronized, locks
+Guarantee: after a write, every read sees the latest value.
+    Synchronous replication
+    Leader-based systems
+    Locking / coordination
+
+Eventual Consistency - async updates, queues
+Guarantee: if no new updates happen, all replicas will eventually converge.
+    Caches
+    Distributed databases (like Dynamo-style)
+    Microservices with async communication
+
+
+Idempotency
+Running it multiple times produces the same result as running it once.
+Solves -> duplicate effects
+
+One way to guarantee idempotency is to use keys.
+    - Request sends idempotency keys and server store it.
+    - If the operation where to be a success validates the keys
+
+
+What can we do to improve user experience:
+Typical architecture
+    Write → goes to primary DB (strong-ish consistency)
+    Read → from replicas/cache (eventual consistency)
+    Communication → async (queues, events)
+
+Silly example:
+
+class PaymentProcessor {
+    private Set<String> processed = ConcurrentHashMap.newKeySet();
+
+    public void process(Payment p) {
+        if (processed.contains(p.id)) return;
+
+        // process payment
+        processed.add(p.id);
+    }
+}

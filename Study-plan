@@ -1,0 +1,141 @@
+🌐 WEEK 2 — Distributed Systems Basics
+🎯 Goal: Think beyond one machine
+
+Day 8 — Core concepts
+Latency vs Throughput
+Horizontal vs Vertical scaling
+
+
+Day 9 — Failures are normal
+Retries
+Timeouts
+Circuit breaker
+
+👉 Learn about:
+
+Resilience4jg
+
+Day 10 — Data consistency
+Strong vs Eventual consistency
+Idempotency
+
+Day 11 — Communication styles
+REST vs Messaging
+
+Day 12 — Message brokers
+Concepts: queues, topics, consumers
+
+👉 Explore:
+
+RabbitMQ or Apache Kafka
+
+
+Day 13 — Hands-on messaging
+
+👉 Build:
+
+Producer → Consumer using queue
+
+Day 14 — Mini project
+
+👉 Extend:
+
+Your system now processes tasks asynchronously via queue
+🧩 WEEK 3 — Microservices with Java
+🎯 Goal: Build real services
+
+Day 15 — Spring Boot basics
+REST APIs
+Controllers, Services
+
+👉 Use:
+
+Spring Boot
+
+Day 16 — Split services
+
+Create:
+
+User Service
+Product Service
+
+Day 17 — Service communication
+REST calls between services
+
+👉 Practice:
+
+One service calling another
+
+Day 18 — Docker (MANDATORY)
+Containers
+Dockerfile
+
+👉 Use:
+
+Docker
+
+Day 19 — Docker Compose
+Run multiple services together
+
+Day 20 — Config & service discovery (light intro)
+Environment configs
+Intro to service registry
+
+Day 21 — Mini project
+
+👉 You now have:
+
+2–3 services running via Docker
+🚪 WEEK 4 — API Gateway (Your Focus)
+🎯 Goal: Control and manage your system entry point
+
+Day 22 — Gateway fundamentals
+Reverse proxy
+Routing
+
+Day 23 — Spring Cloud Gateway
+
+👉 Use:
+
+Spring Cloud Gateway
+
+👉 Practice:
+
+Route requests to services
+
+Day 24 — Authentication (IMPORTANT)
+JWT
+Filters in gateway
+
+Day 25 — Rate limiting
+Protect your services
+
+Day 26 — Logging & observability
+Centralized logs
+Request tracing
+
+Day 27 — Resilience at gateway level
+Retry
+Circuit breaker (again with gateway)
+
+Day 28 — FINAL PROJECT 🚀
+Build this:
+
+Mini E-commerce System
+
+Architecture:
+
+API Gateway (Spring Cloud Gateway)
+Auth Service
+Product Service
+Order Service
+Requirements:
+Gateway handles:
+Routing
+Auth (JWT)
+Rate limiting
+Services:
+Communicate via REST + queue
+Include:
+Async processing (orders)
+Basic failure handling

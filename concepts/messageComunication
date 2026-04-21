@@ -1,0 +1,18 @@
+Messaging (Event-driven / Async) - asynchronous communication.
+    Services lose coupling ( they don't know the other services "state" )
+    Ideal to when you don't need a imediate response
+Comparison between REST and Messaging
+
+
+REST 
+    Thread pools get exhausted → backpressure problem
+    You need:
+        Timeouts
+        Circuit breakers
+        Retries
+
+Messaging 
+    Queue acts as natural buffer
+    Backpressure handled by:
+        Queue size
+        Consumer rate
