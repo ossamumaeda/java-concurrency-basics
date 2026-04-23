@@ -1,2 +1,5 @@
-Producer.class
-Worker.class
+com/example/PubSubConsumer.class
+com/example/Worker.class
+com/example/com/example/PubSubProducer.class
+com/example/Producer.class
+com/example/PubSubProducer.class

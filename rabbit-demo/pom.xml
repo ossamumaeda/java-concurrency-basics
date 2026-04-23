@@ -4,7 +4,7 @@
   <groupId>com.example</groupId>
   <artifactId>rabbit-demo</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version> 
   <name>rabbit-demo</name>
   <url>http://maven.apache.org</url>
   <dependencies>

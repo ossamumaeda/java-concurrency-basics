@@ -1,3 +1,5 @@
+package com.example.onetoone;
+
 import com.rabbitmq.client.*;
 /*
 Worker publishes the tasks and closes
