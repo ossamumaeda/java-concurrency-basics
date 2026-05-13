@@ -1,12 +1,12 @@
 🌐 WEEK 2 — Distributed Systems Basics
 🎯 Goal: Think beyond one machine
 
-Day 8 — Core concepts
+OK - Day 8 — Core concepts
 Latency vs Throughput
 Horizontal vs Vertical scaling
 
 
-Day 9 — Failures are normal
+OK - Day 9 — Failures are normal
 Retries
 Timeouts
 Circuit breaker
@@ -15,11 +15,11 @@ Circuit breaker
 
 Resilience4jg
 
-Day 10 — Data consistency
+OK - Day 10 — Data consistency
 Strong vs Eventual consistency
 Idempotency
 
-Day 11 — Communication styles
+OK - Day 11 — Communication styles
 REST vs Messaging
 
 Day 12 — Message brokers

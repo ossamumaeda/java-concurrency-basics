@@ -1,0 +1,155 @@
+Producer/Consumer basics
+Topics and partitions
+Consumer groups
+Offsets
+Serialization
+Retries + DLQ
+Idempotency
+Transactional outbox
+Kafka Streams
+Event-driven architecture patterns
+
+A lot of backend interviews stop around:
+
+partitions
+consumer groups
+ordering
+retries
+idempotency
+scaling consumers
+
+Those are the core fundamentals.
+
+Topicos:
+- Dentro de cada topico existem varias partições
+- É por isso que existem as chaves(keys)
+- Com isso, conseguimos centralizar mensagens relacionadas dentro da mesma partição, garantindo a ordem
+- A chave geralmente é hasheada pra saber o endereço
+    
+O que acontece com as partições e ordem das mensagens se existir mais de 1 broker? 
+    - Temos o conceito de cluster então = varios brokers geridos pelo kafka
+R: As partições são distribuidas para um broker. O cliente (Aplicação spring por exemplo, apenas pergunta qual o broker responsavel pelo topico X)
+
+Se uma partição inteira fica dentro de 1 unico broker X, caso X fique fora do ar o que acontece?
+    - Partition leader and followers
+R: Cada partição tem um lider e opcionalmente seguidores ( Replicas ). Assim, caso o broker X caia, podemos acessar algum dos followers
+    - Temos uma flag de replication.factor = ? -> Para indicar quantas replicas devem ser criadas
+    OBS: O cliente se conecta apenas com o lider. Caso o lider caia, um novo lider é escolhido e ai os clientes passam a conversar com ele
+    ****: The leader and the followers are BROKERS not partitions. And they can be leader for some partitions and follower to others
+    EX:
+    Partition	Leader	    Followers
+    P0	        Broker1	    Broker2, Broker3
+    P1	        Broker2	    Broker1, Broker3
+    P2	        Broker3	    Broker1, Broker2
+
+Como podemos ter certeza que uma mensagem foi armazenada corretamente?
+- Acknowledgment Levels (acks)
+    0 -> O producer envia a mensagem e não espera nenhuma confirmação
+        . Se qualquer coisa acontecer e a mensagem não chegar corretamente até o broker ou o broker morrer, o producer não vai saber
+
+    1 -> O producer espera apenas o lider receber a mensagem
+        . Se o lider morrer = gameover
+    
+    all -> Producer espera lider E as replicas responderem  
+
+- ISR = In-sync Replicas
+    Leader -> Broker1
+    ISR -> Broker2, Broker3
+
+Como funciona a leitura de dados?
+    - Consumer
+    - Se o producer PRODUZ, o consumer CONSOME
+    - A regra base é: Uma partição pode ser consumida por apenas UM consumer.
+        obs: Mas um consumer pode ler mais de uma partição
+        . Assim, se tivermos 2 partições e 3 consumers no grupo -> 1 consumer vai ficar em IDLE
+        . Se tivermos 8 partições e 4 consumers no grupo -> Cada consumer vai ler 2 partições
+        . Quem fica responsavel por fazer essa distribuição é o consumer lider do grupo
+    
+Heartbeat: Para saber se o consumer esta funcionando, o consumer fica mandando beats para sinalizar = Fault tolerance
+    - Caso o consumer "morra" ele é removido do grupo e um REBALNCE é feito
+    - NO rebalance, um novo consumer é criado E a partir do offset do consumer antigo, ele sabe onde deve continuar lendo as mensagens
+        . Isso garante que não haja perda na leitura de mensagens e que não ocorram leituras duplicadas
+
+Offsets: São a posição em que deve começar a ser lido novamente. Valido apenas dentro de uma partição
+    - EX: leu mensagem nas posições 0,1,2 -> Offset = 3
+Commit offset: É a ação de mover esse ponteiro de Offset
+    . Auto commit:  1. Consumer receives message
+                    2. Kafka auto-commits offset
+                    3. App crashes BEFORE processing
+    . Manual commit:    1. Read message
+                        2. Process successfully
+                        3. Commit offset manually
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Serialization: There are different ways to do that, and the choice is tied to schema compatibility and performance.
+EX: .fields are renamed
+    .required fields disappear
+    .field types change
+
+    - Options: 
+        . JSON
+        . AVRO
+        . Protobuff
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Retries:
+    O que acontece se ocorrer uma falha na hora de ler a mensagem? Ou na hora de armazenar a mensagem?
+
+Consumer retry:
+    Essencialmente: Se alguma coisa acontecer do lado do consumer e a mensagem não for processada, tentamos novamente.
+    Quantas vezes? 
+        . Immediate retry
+        . Delayed retry
+        . Exponential backoff
+    E se falhar muitas vezes? 
+        . DLQ (Dead Letter Queue)
+        . Isola a mensagem com um possível erro
+
+Se a leitura da mensagem falhar, isso não quebra a ordem?
+    . Temos uma nova decisão de projeto: Devemos travar a partição até ler corretamente ou deixar fluir?
+    * decisão de arquitetura
+
+Producer retry:
+    O retry acontece antes da mensagem ser salva.
+    Novo problema: E se a mensagem for salva, mas na hora de enviar a confirmação o sistema falhar?
+        - Caso o retry seja feito, teremos uma mensagem duplicada
+    Solução: enable.idempotence=true -> Kafka automaticamente elimina a duplicata
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Idempotency: Garantir que uma mensagem produzida multiplas vezes pelo producer seja processada apenas 1 vez
+    - Conceito muito relacionado com os retrys.
+        EX: Producer envia mensagem -> Broker recebe e salva, mas na hora de responder falha
+            -> Producer acha que falhou e envia novamente
+            * Temos a duplicação
+    - enable.idempotence=true -> Garante que a idepotencia seja checada pelo kafka
+    - Como ele checa isso? Producer ID (PID) + Sequence Numbers (cada mensagem enviada para uma partição recebe um counter que vai aumentando)
+    - O producer envia uma chave com seu id e a sequencia numerica
+    OBS:
+        . Works only per partition
+        . Works within a single producer session
+        . Does not guarantee exactly-once end-to-end processing
+    Com isso, a idepotencia protege apenas nos casos em que o producer envia a mensagem usando o retry. NÃO para casos em que a APLICAÇÃO envia novamente
+        - Não resolve por exemplo problemas de double call
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+O que acontece com uma operação, de um banco de dados por exemplo, se a database falha em guardar a informação mas a mensagem de confirmação ja foi enviada?
+    - A informação não existe na base, mas os serviço acham que existe
+Ou, se a operação no banco for um sucesso, mas o envio da mensagem falhar?
+    - A informação existe no banco, mas os serviços não são informados
+
+R: Transactional outbox
+    - Como uma união das transações de banco de dados e transações do kafka.
+    - A ideia é salvar o evento outbox na mesma transação do banco de dados. 
+        - Um serviço separado recupera os eventos da outbox e faz o envio
+    - Então ele cria uma especie de base de dados aparte para salvar o que de fato foi salvo no banco.
+
+Como ler e publicar as coisas da outbox?
+. Polling Publisher 
+    - Is a scheduled job -> each determined time interval it reads and sends
+
+. CDC (Change Data Capture) 
+    - Alguma ferramenta monitora mudanças na base de dados e automaticamente publica no kafka
