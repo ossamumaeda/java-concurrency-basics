@@ -153,3 +153,12 @@ Como ler e publicar as coisas da outbox?
 
 . CDC (Change Data Capture) 
     - Alguma ferramenta monitora mudanças na base de dados e automaticamente publica no kafka
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Streams
+    - Rodam dentro da aplicação, não em um contexto separado. 
+    - Facilita o scaling (faz junto com a aplicação em si)
+    - Mesma ideia das streams de dados -> canaliza o fluxo de mensagens e pode fazer algum tipo de tratamento
+        ou redistribuição
+    - Exactly-once semantics
+    - É um pipeline de dados basicamente
