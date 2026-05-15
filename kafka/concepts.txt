@@ -9,14 +9,6 @@ Transactional outbox
 Kafka Streams
 Event-driven architecture patterns
 
-A lot of backend interviews stop around:
-
-partitions
-consumer groups
-ordering
-retries
-idempotency
-scaling consumers
 
 Those are the core fundamentals.
 
@@ -162,3 +154,88 @@ Streams
         ou redistribuição
     - Exactly-once semantics
     - É um pipeline de dados basicamente
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Patterns em Event-driven architecture
+
+Event Notification
+    . Um producer emite um evento/mensagem, sem muitos detalhes - Apenas um sinal
+    . Usado quandos os consumers conseguem trabalhar de forma independente
+    Ex: Usuario se cadastra -> evento de UserRegistered -> Serviço de email carrega infos do user e manda email
+
+Event-Carried State Transfer
+    . Os eventos possuem os dados necessarios para o consumer realizar ação
+    . Usado quando os consumers precisam dos dados imediatamente e não devem depender de serviços exteriores
+    Ex: Evento de pedido criado inclui todos os dados do pedido
+
+Consumer Groups
+    . Varios consumers pertencem ao mesmo grupo
+    . Kafka divide as partitions entre eles
+    . Cada mensagem é processada por apenas UM consumer do grupo
+    . Caso de uso: se um consumer morre, kafka reditribui a partition automaticamente
+    EX: Pedido criado -> Kafka -> grupo de workers processa pagamentos
+        - Quanto mais pedidos mais workers
+Retry + DLQ
+    . Retry = tentar processar novamente
+    . DLQ (Dead Letter Queue) = fila/tópico de mensagens que falharam várias vezes
+    . Usado para evitar perder mensagens
+    Ex: Consumer tenta processar uma mensagem, mas falha
+        - Tenta novamente X vezes
+        - Se falhar todas -> envia mensagem para o topico de DLQ
+
+Transactional Outbox
+    . Resolve problema de inconsistência entre banco e Kafka
+    . Evento é salvo no banco ANTES de ir para Kafka
+    . Tudo acontece na mesma transação
+
+Saga - Choreography
+    . Forma de fazer “transações distribuídas”
+    . Cada serviço executa sua própria transação
+    . Serviços se coordenam usando eventos
+    . Se algo falhar, ocorre compensação
+    Ex: 
+        Order Service
+            ↓
+        Payment Service
+            ↓
+        Inventory Service
+            ↓
+        Shipping Service
+    Se paymente falhar -> dispara Pagamento OrderCancelled ou InventoryReleased 
+
+    Obs: Basicamente, um serviço fica responsavel por realizar as transações locais
+        - Cada serviço emite um evento na conclusão ou falha
+        - Cria uma cadeia de serviços
+    . Melhro quando precisa de auditoria
+        - Muitas etapas
+        - Muitas regras
+        - Fluxo complexo
+
+Saga — Orchestration
+    . Invés de cada serviço disparar eventos e formar uma cadeia
+    . O orquestrador manda o comando e o serviço responde
+    . Isso desacopla os serviços entre si (um serviço não conhece o outro)
+    . MAS acopla o orquestrador em todos os serviços
+    . Temos um fluxo centralizado, mais facil de entender os caminhos
+    . Mais facil de ter sobrecarga no orquestrador
+    . Melhor em sistemas mais simples e quando serviços são independentes
+
+    
+Stream Processing
+    . Processamento contínuo de eventos em tempo real
+    . O consumer agora transforma, agrega, filtra e pode criar novos eventos
+    Ex: Clicks de usuários em diferentes produtos 
+        -> cálculo em tempo real 
+        -> dashboard atualizado com principais produtos
+Event Sourcing
+    . Em vez de se preocupar com estado de dados atual, guarda um log de todos os eventos
+    . O estado atual é construido a partir da leitura de todos os eventos
+    . Usado quando precisamos de rastreabilidade, ou audição de dados
+    Ex: Sistema bancario precisa guardar historico de transações e balanços
+
+
+CQRS (Command Query Responsibility Segregation) 
+    . Separa os modelos de leitura e escrita
+    . Usado em sistemas com logica de negócio complexa ou leitura de dados critica
+    Ex: E-commerce vai ter o banco de dados que grava os pedidos. E os itens disponiveis ficam armazenados em um sistema com cache mais rapido
