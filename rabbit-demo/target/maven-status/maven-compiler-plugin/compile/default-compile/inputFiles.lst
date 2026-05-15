@@ -1,9 +1,8 @@
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/PubSubProducer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/topic/AnalyticsConsumer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/topic/TopicProducer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/topic/PaymentConsumer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/com/example/PubSubProducer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/Producer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/PubSubConsumer.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/Worker.java
-/home/gabriel/Maeda/JAVA-Projetos/unidades/rabbit-demo/src/main/java/com/example/topic/OrderConsumer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/onetoone/Producer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/onetoone/Worker.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/pubsub/PubSubConsumer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/pubsub/PubSubProducer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/topic/AnalyticsConsumer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/topic/OrderConsumer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/topic/PaymentConsumer.java
+/home/gabriel/Projects/java-concurrency-basics/rabbit-demo/src/main/java/com/example/topic/TopicProducer.java
